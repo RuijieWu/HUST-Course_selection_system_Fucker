@@ -33,11 +33,16 @@ def sign()->None:
         resp = httpx.post(url=API_URL,headers=HEADER,data=DATA)
     except Exception:
         print(Exception)
-    html = resp.text
-    if "选课失败，课堂人数已满！" in html:
-        print(time.ctime())
+        resp = None
+    if resp is not None:
+        html = resp.text
+        if "选课失败，课堂人数已满！" in html:
+            print(time.ctime())
+        else:
+            sys.exit()
     else:
-        sys.exit
+        # 处理resp为None的情况
+        print("Response is None")
 
 if __name__ == "__main__":
     try:
@@ -45,6 +50,6 @@ if __name__ == "__main__":
             client_handler = threading.Thread(target=sign)
             client_handler.start()
             #! 请求过于频繁会被HUB系统当作DDOS
-            time.sleep(10)
+            time.sleep(5)
     except KeyboardInterrupt:
         print("Sign in stopped")

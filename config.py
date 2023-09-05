@@ -1,3 +1,3 @@
-SESSION:str = "your_session_here"
+SESSION:str = "5MplpXijTO7HUsQWK62jcxiTXUuZHCf5o5B_nwiWtjl6S0noTGzf!-2068775399"
 CLASS_NAME:str = "钢笔绘画"#!这是个例子
 CLASS_NUMBER:str= "1437248"
