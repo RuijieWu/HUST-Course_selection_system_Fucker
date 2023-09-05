@@ -23,7 +23,7 @@ HEADER = {
     "Sec-GPC"                   :   "1"
 }
 
-DATA = f"kcbh={config.CLASS_NUMBER}&kczxf=2.0&ktbh=202311437248001&ktrl=100&ktrs=99&markZB=&kcmc=%E9%92%A2%E7%AC%94%E7%BB%98%E7%94%BB"
+DATA = f"kcbh={config.CLASS_NUMBER}&kczxf=2.0&ktbh=202311437248001&ktrl=100&ktrs=99&markZB=&kcmc={config.CLASS_NAME}"
 
 API_URL = "http://wsxk.hust.edu.cn/zxqstudentcourse/zxqcoursesresult.action"
 
