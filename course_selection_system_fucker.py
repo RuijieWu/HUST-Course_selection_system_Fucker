@@ -45,6 +45,6 @@ if __name__ == "__main__":
             client_handler = threading.Thread(target=sign)
             client_handler.start()
             #! 请求过于频繁会被HUB系统当作DDOS
-            time.sleep(60)
+            time.sleep(10)
     except KeyboardInterrupt:
         print("Sign in stopped")
