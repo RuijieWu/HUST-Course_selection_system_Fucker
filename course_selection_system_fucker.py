@@ -13,7 +13,6 @@ HEADER = {
     "Accept-Language"           :   "zh-CN,zh;q=0.8,zh-TW;q=0.7,zh-HK;q=0.5,en-US;q=0.3,en;q=0.2",
     "Accept-Encoding"           :   "gzip, deflate",
     "Content-Type"              :   "application/x-www-form-urlencoded",
-    "Content-Length"            :   "111",
     "Origin"                    :   "http://wsxk.hust.edu.cn",
     "Connection"                :   "close",
     "Referer"                   :   "http://wsxk.hust.edu.cn/zxqstudentcourse/zxqclassroom.action?kcbh=1437248&ggkdl=74&markZB=",
@@ -23,21 +22,32 @@ HEADER = {
     "Sec-GPC"                   :   "1"
 }
 
-DATA = f"kcbh={config.CLASS_NUMBER}&kczxf=2.0&ktbh=202311437248001&ktrl=100&ktrs=99&markZB=&kcmc={config.CLASS_NAME}"
+DATA = {
+    "kcbh"  :config.CLASS_NUMBER,
+    "kczxf" :"2.0",
+    "ktbh"  :"202311437248001",
+    "ktrl"  :"100",
+    "ktrs"  :"99",
+    "markZB":"",
+    "kcmc"  :config.CLASS_NAME
+}
 
 API_URL = "http://wsxk.hust.edu.cn/zxqstudentcourse/zxqcoursesresult.action"
 
 def sign()->None:
     '''send post request and judge if it is successful'''
     try:
-        resp = httpx.post(url=API_URL,headers=HEADER,data=DATA)
-    except Exception:
-        print(Exception)
-    html = resp.text
-    if "选课失败，课堂人数已满！" in html:
-        print(time.ctime())
-    else:
-        sys.exit
+        resp = httpx.post(url=API_URL,headers=HEADER,data=DATA,timeout=10)
+    except httpx.RequestError as err:
+        print(err)
+    if resp:
+        if resp.status_code == 200:
+            html = resp.text
+            #print(html)
+            if "选课失败，课堂人数已满！" in html:
+                print(time.ctime())
+            else:
+                sys.exit()
 
 if __name__ == "__main__":
     try:
