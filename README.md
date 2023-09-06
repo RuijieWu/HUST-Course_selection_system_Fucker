@@ -1,5 +1,5 @@
 # HUST-Course_selection_system_Fucker
- 抢课用简易脚本
+ 抢课用简易脚本,经测试现已成功抢到
 require httpx
 你也可以把ctrl+f把httpx改成requests,效果是一样的
 
