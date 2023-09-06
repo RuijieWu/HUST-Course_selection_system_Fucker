@@ -2,7 +2,16 @@
  抢课用简易脚本,经测试现已成功抢到
 require httpx
 你也可以把ctrl+f把httpx改成requests,效果是一样的
-
+>没有httpx?
+>使用
+>```
+>pip install httpx
+>```
+>进行下载
+>>MacOS的话使用
+>>```
+>>pip3 install httpx
+>>```
 ## 更简易的脚本
 这是一个极其简单的发包程序，因此完全可以用更简单的shell程序完成这个任务
 ```
