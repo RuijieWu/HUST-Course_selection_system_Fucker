@@ -31,7 +31,12 @@ $resp = ''
 :
 ```
 # 使用方式
-在config的SESSION里填入你**成功登录后**按F12得到的session值，CLASS_NAME填入你打算抢的课程名字，CLASS_NUMBER填入课堂编号，COURSE_NUMBER填入课程编号，然后运行course_selection_system_fucker.py即可
+1. 登录并打开http://wsxk.hust.edu.cn/zxqcourse/index_zxq.jsp选课系统首页
+2. 按下F12选择顶部栏中的网络
+3. 选择任意一个文件查看请求头，复制`Cookie:`后的字符串，填入到config.py中（注意用双引号包裹）
+4. 找到你想要抢or截胡的课，在开启网络抓包的情况下点击报名
+5. 报名失败后在网络栏下的```zxqcoursesresult.action```文件，查看载荷或请求，把表单数据中对应的值填入config中
+6. 运行主程序，不断出现"选课成功/失败"即可
 
 # Tips
 学校禁止选课是通过前端实现的(把选课按钮给disbale了)，[选课页面的接口](http://wsxk.hust.edu.cn/zxqstudentcourse/zxqcourses.action)其实依然开放着，例如9.6选课但是9.5你也能通过这个接口访问到选课页面并查看选课情况。
