@@ -72,7 +72,7 @@ func SelectCourse(sessionID string, courseName string, courseNumber string, clas
 
 		if strings.Contains(string(body), "成功") {
 			fmt.Printf("Successfully selected %s.\n", courseName)
-			break // 成功选课后退出循环
+			break
 		} else {
 			fmt.Printf("Failed to select %s. Retrying...\n", courseName)
 			// 等待一段时间再次尝试选课，可以自行调整等待时间
