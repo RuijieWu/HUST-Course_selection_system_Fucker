@@ -70,13 +70,13 @@ func SelectCourse(sessionID string, courseName string, courseNumber string, clas
 		// 输出选课结果和选课耗时
 		fmt.Printf("Time: %s, Course: %s\n", startTime.Format("2006-01-02 15:04:05"), courseName)
 
-		if strings.Contains(string(body), "选课失败") {
+		if strings.Contains(string(body), "成功") {
+			fmt.Printf("Successfully selected %s.\n", courseName)
+			break // 成功选课后退出循环
+		} else {
 			fmt.Printf("Failed to select %s. Retrying...\n", courseName)
 			// 等待一段时间再次尝试选课，可以自行调整等待时间
 			time.Sleep(time.Second * 10)
-		} else {
-			fmt.Printf("Successfully selected %s.\n", courseName)
-			break // 成功选课后退出循环
 		}
 	}
 }
