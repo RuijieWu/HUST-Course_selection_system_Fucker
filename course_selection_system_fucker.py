@@ -23,12 +23,12 @@ HEADER = {
 }
 
 DATA = {
-    "kcbh"  :config.CLASS_NUMBER,
+    "kcbh"  :config.COURSE_NUMBER,
     "kczxf" :"2.0",
-    "ktbh"  :"202311437248001",
+    "ktbh"  :"con",
     "ktrl"  :"100",
     "ktrs"  :"99",
-    "markZB":"",
+    "markZB":config.CLASS_NUMBER,
     "kcmc"  :config.CLASS_NAME
 }
 

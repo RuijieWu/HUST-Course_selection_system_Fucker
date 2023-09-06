@@ -22,7 +22,7 @@ $resp = ''
 :
 ```
 # 使用方式
-在config的session里填入你**成功登录后**按F12得到的session值，classname填入你打算抢的课程名字，classnumber然后运行course_selection_system_fucker.py即可
+在config的SESSION里填入你**成功登录后**按F12得到的session值，CLASS_NAME填入你打算抢的课程名字，CLASS_NUMBER填入课堂编号,COURSE_NUMBER填入课程编号然后运行course_selection_system_fucker.py即可
 
 # Tips
 学校禁止选课是通过前端实现的(把选课按钮给disbale了)，[选课页面的接口](http://wsxk.hust.edu.cn/zxqstudentcourse/zxqcourses.action)其实依然开放着，例如9.6选课但是9.5你也能通过这个接口访问到选课页面并查看选课情况。
