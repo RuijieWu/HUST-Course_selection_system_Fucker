@@ -44,7 +44,7 @@ def sign()->None:
         if resp.status_code == 200:
             html = resp.text
             #print(html)
-            if "选课失败，课堂人数已满！" in html:
+            if "成功" not in html:
                 print(f"选课失败 {time.ctime()}")
             else:
                 print("选课成功")
