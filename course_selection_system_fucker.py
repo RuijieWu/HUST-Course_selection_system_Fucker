@@ -45,8 +45,9 @@ def sign()->None:
             html = resp.text
             #print(html)
             if "选课失败，课堂人数已满！" in html:
-                print(time.ctime())
+                print(f"选课失败 {time.ctime()}")
             else:
+                print("选课成功")
                 sys.exit()
 
 if __name__ == "__main__":
