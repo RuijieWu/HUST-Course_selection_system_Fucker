@@ -4,7 +4,7 @@ package main
 
 import (
 	"fmt"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"net/url"
 	"strings"
@@ -12,7 +12,6 @@ import (
 	"time"
 )
 
-// SelectCourse 封装课程选课功能
 // SelectCourse 封装课程选课功能
 func SelectCourse(sessionID string, courseName string, courseNumber string, classroomNumber string, wg *sync.WaitGroup) {
 	defer wg.Done()
@@ -59,7 +58,7 @@ func SelectCourse(sessionID string, courseName string, courseNumber string, clas
 		}
 		defer resp.Body.Close()
 
-		body, err := ioutil.ReadAll(resp.Body)
+		body, err := io.ReadAll(resp.Body)
 		if err != nil {
 			fmt.Printf("Error reading response for %s: %v\n", courseName, err)
 			return
@@ -68,7 +67,7 @@ func SelectCourse(sessionID string, courseName string, courseNumber string, clas
 		// 输出选课结果和选课耗时
 		fmt.Printf("Time: %s, Course: %s\n", startTime.Format("2006-01-02 15:04:05"), courseName)
 
-		if strings.Contains(string(body), "选课失败") {
+		if strings.Contains(string(body), "失败") {
 			fmt.Printf("Failed to select %s. Retrying...\n", courseName)
 			// 等待一段时间再次尝试选课，可以自行调整等待时间
 			time.Sleep(time.Second * 10)
@@ -80,20 +79,13 @@ func SelectCourse(sessionID string, courseName string, courseNumber string, clas
 }
 
 func main() {
-	sessionID := "JSESSIONID=5udpAN-VQcLmPsYS4i5NEJMm32Q4AO9O_kLQZkQn5ec_p9TXxGU0!-232618489; BIGipServerpool-hub-wsxkxt=2970225162.22811.0000" // 请替换为你的会话ID
-
 	// 创建一个等待组，用于等待所有goroutines完成
 	var wg sync.WaitGroup
-
-	// 从courses.go文件导入课程信息
-	courses := Courses
-
 	// 启动并发选课
-	for _, course := range courses {
+	for true {
 		wg.Add(1)
 		go SelectCourse(sessionID, course.CourseName, course.CourseNumber, course.ClassroomNumber, &wg)
 	}
-
 	// 等待所有goroutines完成
 	wg.Wait()
 }
