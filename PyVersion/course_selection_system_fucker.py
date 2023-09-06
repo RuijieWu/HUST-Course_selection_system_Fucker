@@ -23,9 +23,9 @@ HEADER = {
 }
 
 DATA = {
-    "kcbh"  :config.CLASS_NUMBER,
+    "kcbh"  :config.COURSE_NUMBER,
     "kczxf" :"2.0",
-    "ktbh"  :"202311437248001",
+    "ktbh"  :config.CLASS_NUMBER,
     "ktrl"  :"100",
     "ktrs"  :"99",
     "markZB":"",
@@ -45,8 +45,9 @@ def sign()->None:
             html = resp.text
             #print(html)
             if "成功" not in html:
-                print(time.ctime())
+                print(f"选课失败 {time.ctime()}")
             else:
+                print("选课成功")
                 sys.exit()
 
 if __name__ == "__main__":
