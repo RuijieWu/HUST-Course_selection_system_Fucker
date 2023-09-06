@@ -23,13 +23,9 @@ HEADER = {
 }
 
 DATA = {
-    "kcbh"  :config.CLASS_NUMBER,
+    "kcbh"  :config.COURSE_NUMBER,
     "kczxf" :"2.0",
-<<<<<<< HEAD:PyVersion/course_selection_system_fucker.py
     "ktbh"  :config.CLASS_NUMBER,
-=======
-    "ktbh"  :"202311437248001",
->>>>>>> parent of 4b20475 (0.1.1):course_selection_system_fucker.py
     "ktrl"  :"100",
     "ktrs"  :"99",
     "markZB":"",
