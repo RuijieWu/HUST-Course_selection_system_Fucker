@@ -2,6 +2,10 @@
 
 package main
 
+const (
+	sessionID = "JSESSIONID=5udpAN-VQcLmPsYS4i5NEJMm32Q4AO9O_kLQZkQn5ec_p9TXxGU0!-232618489; BIGipServerpool-hub-wsxkxt=2970225162.22811.0000" // 请替换为你的Cookie
+)
+
 var Courses = []struct {
 	CourseName      string
 	CourseNumber    string

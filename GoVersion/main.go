@@ -81,9 +81,7 @@ func SelectCourse(sessionID string, courseName string, courseNumber string, clas
 	}
 }
 
-func main() {
-	sessionID := "JSESSIONID=5udpAN-VQcLmPsYS4i5NEJMm32Q4AO9O_kLQZkQn5ec_p9TXxGU0!-232618489; BIGipServerpool-hub-wsxkxt=2970225162.22811.0000" // 请替换为你的Cookie
-	// 创建一个等待组，用于等待所有goroutines完成
+func main() { // 创建一个等待组，用于等待所有goroutines完成
 	var wg sync.WaitGroup
 
 	// 从courses.go文件导入课程信息
