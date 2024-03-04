@@ -1,20 +1,31 @@
 # HUST-Course_selection_system_Fucker
- 抢课用简易脚本,经测试现已成功抢到
-require httpx
+
+这是一个抢课用简易脚本,经测试现已成功抢到✌
+Pyversion是Python版，需要Python环境
+Goversion是Go版本，需要Go编译器
 你也可以把ctrl+f把httpx改成requests,效果是一样的
 >没有httpx?
 >使用
+>
+>``` Bash
+>
+> pip install httpx
 >```
->pip install httpx
->```
+>
 >进行下载
->>MacOS的话使用
->>```
->>pip3 install httpx
->>```
+>MacOS的话使用
+>
+>``` Bash
+>
+>pip3 install httpx
+>
+>```
+
 ## 更简易的脚本
-这是一个极其简单的发包程序，因此完全可以用更简单的shell程序完成这个任务
-```
+
+这是我为了抢课临时花半小时写的一个极其简单的发包程序，当我抢完课回过头来看的时候发现代码完全可以写的更简略一些，例如你完全可以用更简单的shell程序完成这个任务
+
+``` bash
 #! bin/bash
 $resp = ''
 
@@ -30,19 +41,28 @@ $resp = ''
 };
 :
 ```
-# 使用方式
-1. 登录并打开http://wsxk.hust.edu.cn/zxqcourse/index_zxq.jsp选课系统首页
+
+## 使用方式
+
+1. 登录并打开[选课系统首页](http://wsxk.hust.edu.cn/zxqcourse/index_zxq.jsp)
+![选课页面](https://github.com/RuijieWu/HUST-Course_selection_system_Fucker/blob/main/Image/%E9%80%89%E8%AF%BE%E9%A1%B5%E9%9D%A2.png)
 2. 按下F12选择顶部栏中的网络
 3. 选择任意一个文件查看请求头，复制`Cookie:`后的字符串，填入到config.py中（注意用双引号包裹）
 4. 找到你想要抢or截胡的课，在开启网络抓包的情况下点击报名
+![进行选课](https://github.com/RuijieWu/HUST-Course_selection_system_Fucker/blob/main/Image/%E8%BF%9B%E8%A1%8C%E9%80%89%E8%AF%BE.png)
 5. 报名失败后在网络栏下的```zxqcoursesresult.action```文件，查看载荷或请求，把表单数据中对应的值填入config中
+![获取cookie](https://github.com/RuijieWu/HUST-Course_selection_system_Fucker/blob/main/Image/%E8%8E%B7%E5%8F%96cookie.png)
 6. 运行主程序，不断出现"选课成功/失败"即可
+
 >经过测试，```ktrl```和```ktrs```字段不必要。
-# Tips
+
+## Tips
+
 学校禁止选课是通过前端实现的(把选课按钮给disbale了)，[选课页面的接口](http://wsxk.hust.edu.cn/zxqstudentcourse/zxqcourses.action)其实依然开放着，例如9.6选课但是9.5你也能通过这个接口访问到选课页面并查看选课情况。
 
 因此，你可以直接前往该页面，进行一次抓包发现报文
-```
+
+``` HTTP
 User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/117.0
 Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8
 Accept-Language: zh-CN,zh;q=0.8,zh-TW;q=0.7,zh-HK;q=0.5,en-US;q=0.3,en;q=0.2
@@ -62,14 +82,17 @@ kcbh=1437248&kczxf=2.0&ktbh=202311437248001&ktrl=100&ktrs=100&markZB=&kcmc=%E9%9
 //url解码后发现为
 kcbh=1437248&kczxf=2.0&ktbh=202311437248001&ktrl=100&ktrs=100&markZB=&kcmc=钢笔绘画
 ```
+
 参考学校其他系统,以及一点点猜测，不难发现学校的字段名都是汉语拼音的缩写。例如```kcmc```是课程名称，```ktrl```是课堂容量，```ktrs```是课堂人数。`kcbh`是课程编号，`ktbh`是课堂编号。构造POST报文的DATA字段值并发送即可实现选课目的
 
 令人遗憾的是，猜测其他字段值含义的成本恐怕要大于我愿意为此付出的精力，因此这个脚本程序的进一步简易化，自动化要交给别人了，如果你有兴趣，欢迎pr
-# History
+
+## History
+
 2023.9.6 增加了更高性能，更自动化全面的GoVersion
 
-# Todo
-- [X] 用Go重构提高并发性能
+## Todo (Waiting for PR)
+
 - [ ] 确认抢课报文的有效载荷，精简请求报文
 - [ ] 人工缓存所有课程编号
 - [ ] 找出课堂编号的规律，让使用者免于亲自抓包查找
