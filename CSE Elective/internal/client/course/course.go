@@ -1,11 +1,18 @@
-package client
+package course
 
 import (
 	"encoding/json"
 	"errors"
 	"fmt"
 
+	"github.com/imroc/req/v3"
 	"github.com/sirupsen/logrus"
+)
+
+var (
+	ErrNullCourseID        = errors.New("未输入 Course ID 或 Course ID 为空")
+	ErrCourseLimit         = errors.New("选课人数已达上限！")
+	ErrCourseTimeNotProper = errors.New("不在选课时段范围内！")
 )
 
 type Course struct {
@@ -26,7 +33,7 @@ type Course struct {
 	Choosable         int    `json:"choosable"`
 }
 
-func (c *Client) GetCourses() ([]Course, error) {
+func GetCourses(c *req.Client) (*[]Course, error) {
 	// activeSemester=true: 当前学期
 	// chosen=false: 未选
 	// choosable=true: 可选
@@ -39,7 +46,7 @@ func (c *Client) GetCourses() ([]Course, error) {
 	}
 
 	resp := &Response{}
-	res, err := c.client.R().Get(url)
+	res, err := c.R().Get(url)
 	if err != nil || res.GetStatusCode() != 200 {
 		logrus.Errorf("[GetCourses] failed: code=%d, msg=%s, err=%v", res.GetStatusCode(), res.String(), err)
 		return nil, err
@@ -51,10 +58,10 @@ func (c *Client) GetCourses() ([]Course, error) {
 		return nil, err
 	}
 
-	return resp.Courses, nil
+	return &resp.Courses, nil
 }
 
-func (c *Client) getCourseClassNumber(course *Course) error {
+func GetCourseClassNumber(c *req.Client, course *Course) error {
 	// http://222.20.126.201/dev-api/xuanke/class/{course_id}/student
 
 	url := fmt.Sprintf("http://222.20.126.201/dev-api/xuanke/class/%d/student", course.CourseId)
@@ -69,7 +76,7 @@ func (c *Client) getCourseClassNumber(course *Course) error {
 	}
 
 	resp := &Response{}
-	res, err := c.client.R().Get(url)
+	res, err := c.R().Get(url)
 	if err != nil || res.GetStatusCode() != 200 {
 		logrus.Errorf("[GetCourses] failed: code=%d, msg=%s, err=%v", res.GetStatusCode(), res.String(), err)
 		return errors.New("get class number failed")
@@ -85,24 +92,24 @@ func (c *Client) getCourseClassNumber(course *Course) error {
 		logrus.Error("没有可选择的课堂")
 		return errors.New("class number not found")
 	}
+
+	fmt.Println(resp.Rows[0].ClassId)
+
 	course.CourseClassNumber = resp.Rows[0].ClassId
 	return nil
 }
 
-var (
-	ErrCourseLimit         = errors.New("选课人数已达上限！")
-	ErrCourseTimeNotProper = errors.New("不在选课时段范围内！")
-)
-
-func (c *Client) SelectCourse(course Course) error {
-	if course.CourseClassNumber == "" {
-		// 没有classNumber，先获取
-		err := c.getCourseClassNumber(&course)
+func SelectCourse(c *req.Client, target *Course) error {
+	if target.CourseId == -1 || target.CourseId == 0 {
+		return ErrNullCourseID
+	}
+	if target.CourseClassNumber == "" {
+		err := GetCourseClassNumber(c, target)
 		if err != nil {
 			return err
 		}
 	}
-	url := fmt.Sprintf("http://222.20.126.201/dev-api/xuanke/course/%d/select?classNumber=%s", course.CourseId, course.CourseClassNumber)
+	url := fmt.Sprintf("http://222.20.126.201/dev-api/xuanke/course/%d/select?classNumber=%s", target.CourseId, target.CourseClassNumber)
 
 	type Response struct {
 		Code int    `json:"code"`
@@ -110,7 +117,7 @@ func (c *Client) SelectCourse(course Course) error {
 	}
 
 	resp := &Response{}
-	res, err := c.client.R().Put(url)
+	res, err := c.R().Put(url)
 	if err != nil || res.GetStatusCode() != 200 {
 		logrus.Errorf("[SelectCourse] failed: code=%d, msg=%s, err=%v", res.GetStatusCode(), res.String(), err)
 		return errors.New("select course failed")

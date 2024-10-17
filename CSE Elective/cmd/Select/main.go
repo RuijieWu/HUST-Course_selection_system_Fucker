@@ -6,14 +6,16 @@ import (
 
 	"github.com/RuijieWu/HUST-OCSS-Fucker/CSE-Elective/config"
 	"github.com/RuijieWu/HUST-OCSS-Fucker/CSE-Elective/internal/client"
+	"github.com/RuijieWu/HUST-OCSS-Fucker/CSE-Elective/internal/client/course"
 )
 
 func main() {
-	c := client.NewClient()
+
+	c := client.NewFucker()
 
 	t := config.TOKEN
 	if t == "" {
-		fmt.Println("输入TOKEN:")
+		fmt.Println("输入 TOKEN:")
 		fmt.Scanln(&t)
 	}
 	c.SetToken(t)
@@ -26,8 +28,8 @@ func main() {
 
 	for {
 		startTime := time.Now()
-		err := c.SelectCourse(client.Course{
-			CourseId: config.COURSE_ID,
+		err := c.SelectCourse(&course.Course{
+			CourseId: id,
 		})
 		end := time.Now()
 		if err != nil {
@@ -38,5 +40,4 @@ func main() {
 			break
 		}
 	}
-
 }

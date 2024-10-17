@@ -1,28 +1,17 @@
-package client
+package user
 
 import (
 	"encoding/base64"
 	"encoding/json"
-	"time"
+	"fmt"
 
 	"github.com/imroc/req/v3"
 	"github.com/sirupsen/logrus"
 )
 
-type Client struct {
-	client *req.Client
-	token  string
-}
-
-func NewClient() *Client {
-	return &Client{
-		client: req.C().ImpersonateChrome().SetTimeout(10 * time.Second),
-	}
-}
-
-func (c *Client) GetCapchaImage() ([]byte, string, error) {
+func GetCapchaImage(c *req.Client) ([]byte, string, error) {
 	url := "http://222.20.126.201/dev-api/captchaImage"
-	resp, err := c.client.R().Get(url)
+	resp, err := c.R().Get(url)
 	if err != nil || resp.GetStatusCode() != 200 {
 		logrus.Errorf("[GetCapchaImage] failed: code=%d, msg=%s, err=%v", resp.GetStatusCode(), resp.String(), err)
 		return nil, "", err
@@ -51,7 +40,7 @@ func (c *Client) GetCapchaImage() ([]byte, string, error) {
 	return img, res.Uuid, nil
 }
 
-func (c *Client) Login(username string, password string, code string, uuid string) error {
+func Login(c *req.Client, username string, password string, code string, uuid string) (string, error) {
 	url := "http://222.20.126.201/dev-api/login"
 	type Request struct {
 		Username string `json:"username"`
@@ -67,7 +56,7 @@ func (c *Client) Login(username string, password string, code string, uuid strin
 	}
 
 	resp := &Response{}
-	res, err := c.client.R().SetBody(Request{
+	res, err := c.R().SetBody(Request{
 		Username: username,
 		Password: password,
 		Code:     code,
@@ -75,20 +64,43 @@ func (c *Client) Login(username string, password string, code string, uuid strin
 	}).Post(url)
 	if err != nil || res.GetStatusCode() != 200 {
 		logrus.Errorf("[Login] failed: code=%d, msg=%s, err=%v", res.GetStatusCode(), res.String(), err)
-		return err
+		return "", err
 	}
 
 	json.Unmarshal(res.Bytes(), resp)
 	if resp.Code != 200 {
 		logrus.Errorf("login failed: %s", resp.Msg)
-		return err
+		return "", err
 	}
-	c.token = resp.Token
-	c.client.SetCommonBearerAuthToken(c.token)
-	return nil
+	return resp.Token, nil
 }
 
-func (c *Client) SetToken(token string) {
-	c.token = token
-	c.client.SetCommonBearerAuthToken(token)
+func GetProfile(c *req.Client) ([]byte, error) {
+	url := "http://222.20.126.201/dev-api/system/user/profile"
+	resp, err := c.R().Get(url)
+	if err != nil || resp.GetStatusCode() != 200 {
+		logrus.Errorf("[GetProfile] failed: code=%d, msg=%s, err=%v", resp.GetStatusCode(), resp.String(), err)
+		return []byte{}, err
+	}
+
+	type Response struct {
+		Msg       string   `json:"msg"`
+		PostGroup string   `json:"postGroup"`
+		Code      int      `json:"code"`
+		Data      struct{} `json:"data"`
+		RoleGroup string   `json:"roleGroup"`
+	}
+
+	res := &Response{}
+	err = json.Unmarshal(resp.Bytes(), res)
+	if err != nil {
+		fmt.Println(err)
+		return []byte{}, err
+	}
+	if res.Code != 200 {
+		logrus.Errorf("get capcha image failed: %s", res.Msg)
+		return []byte{}, err
+	}
+
+	return resp.Bytes(), nil
 }
