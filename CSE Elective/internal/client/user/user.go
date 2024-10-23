@@ -13,7 +13,7 @@ func GetCapchaImage(c *req.Client) ([]byte, string, error) {
 	url := "http://222.20.126.201/dev-api/captchaImage"
 	resp, err := c.R().Get(url)
 	if err != nil || resp.GetStatusCode() != 200 {
-		logrus.Errorf("[GetCapchaImage] failed: code=%d, msg=%s, err=%v", resp.GetStatusCode(), resp.String(), err)
+		logrus.Errorf("[!] [GetCapchaImage] failed: code=%d, msg=%s, err=%v", resp.GetStatusCode(), resp.String(), err)
 		return nil, "", err
 	}
 	type Response struct {
@@ -27,14 +27,14 @@ func GetCapchaImage(c *req.Client) ([]byte, string, error) {
 	res := &Response{}
 	json.Unmarshal(resp.Bytes(), res)
 	if res.Code != 200 {
-		logrus.Errorf("get capcha image failed: %s", res.Msg)
+		logrus.Errorf("[!] get capcha image failed: %s", res.Msg)
 		return nil, "", err
 	}
 
 	var img []byte
 	img, err = base64.StdEncoding.DecodeString(res.Img)
 	if err != nil {
-		logrus.Errorf("decode capcha image failed: %s", err)
+		logrus.Errorf("[!] decode capcha image failed: %s", err)
 		return nil, "", err
 	}
 	return img, res.Uuid, nil
@@ -63,13 +63,13 @@ func Login(c *req.Client, username string, password string, code string, uuid st
 		Uuid:     uuid,
 	}).Post(url)
 	if err != nil || res.GetStatusCode() != 200 {
-		logrus.Errorf("[Login] failed: code=%d, msg=%s, err=%v", res.GetStatusCode(), res.String(), err)
+		logrus.Errorf("[!] [Login] failed: code=%d, msg=%s, err=%v", res.GetStatusCode(), res.String(), err)
 		return "", err
 	}
 
 	json.Unmarshal(res.Bytes(), resp)
 	if resp.Code != 200 {
-		logrus.Errorf("login failed: %s", resp.Msg)
+		logrus.Errorf("[!] login failed: %s", resp.Msg)
 		return "", err
 	}
 	return resp.Token, nil
@@ -79,7 +79,7 @@ func GetProfile(c *req.Client) ([]byte, error) {
 	url := "http://222.20.126.201/dev-api/system/user/profile"
 	resp, err := c.R().Get(url)
 	if err != nil || resp.GetStatusCode() != 200 {
-		logrus.Errorf("[GetProfile] failed: code=%d, msg=%s, err=%v", resp.GetStatusCode(), resp.String(), err)
+		logrus.Errorf("[!] [GetProfile] failed: code=%d, msg=%s, err=%v", resp.GetStatusCode(), resp.String(), err)
 		return []byte{}, err
 	}
 
@@ -98,7 +98,7 @@ func GetProfile(c *req.Client) ([]byte, error) {
 		return []byte{}, err
 	}
 	if res.Code != 200 {
-		logrus.Errorf("get capcha image failed: %s", res.Msg)
+		logrus.Errorf("[!] get capcha image failed: %s", res.Msg)
 		return []byte{}, err
 	}
 

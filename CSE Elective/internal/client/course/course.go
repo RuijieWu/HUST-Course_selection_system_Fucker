@@ -10,9 +10,11 @@ import (
 )
 
 var (
-	ErrNullCourseID        = errors.New("未输入 Course ID 或 Course ID 为空")
-	ErrCourseLimit         = errors.New("选课人数已达上限！")
-	ErrCourseTimeNotProper = errors.New("不在选课时段范围内！")
+	ErrNullCourseID         = errors.New("未输入 Course ID 或 Course ID 为空")
+	ErrCourseLimit          = errors.New("选课人数已达上限！")
+	ErrCourseTimeNotProper  = errors.New("不在选课时段范围内！")
+	ErrGetClassNumberFailed = errors.New("get class number failed")
+	ErrClassNumberNotFound  = errors.New("class number not found")
 )
 
 type Course struct {
@@ -48,13 +50,13 @@ func GetCourses(c *req.Client) (*[]Course, error) {
 	resp := &Response{}
 	res, err := c.R().Get(url)
 	if err != nil || res.GetStatusCode() != 200 {
-		logrus.Errorf("[GetCourses] failed: code=%d, msg=%s, err=%v", res.GetStatusCode(), res.String(), err)
+		logrus.Errorf("[!] [GetCourses] failed: code=%d, msg=%s, err=%v", res.GetStatusCode(), res.String(), err)
 		return nil, err
 	}
 
 	json.Unmarshal(res.Bytes(), resp)
 	if resp.Code != 200 {
-		logrus.Errorf("get courses failed: %s", resp.Msg)
+		logrus.Errorf("[!] get courses failed: %s", resp.Msg)
 		return nil, err
 	}
 
@@ -78,19 +80,19 @@ func GetCourseClassNumber(c *req.Client, course *Course) error {
 	resp := &Response{}
 	res, err := c.R().Get(url)
 	if err != nil || res.GetStatusCode() != 200 {
-		logrus.Errorf("[GetCourses] failed: code=%d, msg=%s, err=%v", res.GetStatusCode(), res.String(), err)
-		return errors.New("get class number failed")
+		logrus.Errorf("[!] [GetCourses] failed: code=%d, msg=%s, err=%v", res.GetStatusCode(), res.String(), err)
+		return ErrGetClassNumberFailed
 	}
 
 	json.Unmarshal(res.Bytes(), resp)
 	if resp.Code != 200 {
-		logrus.Errorf("get class number failed: %s", resp.Msg)
-		return errors.New("get class number failed")
+		logrus.Errorf("[!] get class number failed: %s", resp.Msg)
+		return ErrGetClassNumberFailed
 	}
 
 	if len(resp.Rows) == 0 {
-		logrus.Error("没有可选择的课堂")
-		return errors.New("class number not found")
+		logrus.Error("[!] 没有可选择的课堂")
+		return ErrClassNumberNotFound
 	}
 
 	fmt.Println(resp.Rows[0].ClassId)
@@ -119,7 +121,7 @@ func SelectCourse(c *req.Client, target *Course) error {
 	resp := &Response{}
 	res, err := c.R().Put(url)
 	if err != nil || res.GetStatusCode() != 200 {
-		logrus.Errorf("[SelectCourse] failed: code=%d, msg=%s, err=%v", res.GetStatusCode(), res.String(), err)
+		logrus.Errorf("[!] [SelectCourse] failed: code=%d, msg=%s, err=%v", res.GetStatusCode(), res.String(), err)
 		return errors.New("select course failed")
 	}
 
