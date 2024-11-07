@@ -1,3 +1,9 @@
+/*
+ * @Author: 7erry
+ * @Date: 2024-10-23 13:18:55
+ * @LastEditTime: 2024-11-07 14:02:43
+ * @Description:
+ */
 package main
 
 import (
@@ -44,12 +50,17 @@ func main() {
 	fmt.Scanln(&i)
 
 	id := (*targets)[i].CourseId
-	date, err := time.Parse("2006-01-02 15:04:05", (*targets)[i].CStartDate)
+	date, err := time.ParseInLocation(time.DateTime, (*targets)[i].CStartDate, time.Local)
 	utils.CheckIfError(err)
-	toki := date.Add(time.Second * config.AHEAD_OF_TIME)
 
-	utils.Info("[*] 即将在 %s 开始抢课\n请等待 %s", toki, toki.Sub(time.Now()))
-	time.Sleep(toki.Sub(time.Now()))
+	//* 获取 Client 与 Server 的本地时间差
+	time_diff, err := c.GetTimeDiff()
+	utils.CheckIfError(err)
+
+	toki := date.Add(time_diff)
+	duration := time.Until(toki)
+	utils.Info("[*] 即将在 %s 开始抢课\n请等待 %s", toki, duration)
+	time.Sleep(duration)
 
 	for !time.Now().Before(toki) {
 		startTime := time.Now()

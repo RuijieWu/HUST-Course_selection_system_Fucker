@@ -1,11 +1,17 @@
 package client
 
 import (
+	"errors"
 	"time"
 
 	"github.com/RuijieWu/HUST-OCSS-Fucker/CSE-Elective/internal/client/course"
 	"github.com/RuijieWu/HUST-OCSS-Fucker/CSE-Elective/internal/client/user"
+	"github.com/RuijieWu/HUST-OCSS-Fucker/CSE-Elective/internal/utils"
 	"github.com/imroc/req/v3"
+)
+
+var (
+	ErrGetTimeDiffFailed = errors.New("[*] Get Time difference Failed ")
 )
 
 type Fucker struct {
@@ -54,4 +60,24 @@ func (c *Fucker) GetCourses() (*[]course.Course, error) {
 
 func (c *Fucker) SelectCourse(target *course.Course) error {
 	return course.SelectCourse(c.Client, target)
+}
+
+func (c *Fucker) GetTimeDiff() (time.Duration, error) {
+	//* 往返过程中大概率是 Client 发送时间更接近 Server 收到请求的时间
+	c_date := time.Now()
+	resp, err := c.Client.R().Get("http://222.20.126.201/student/student/course")
+	//* fmt.Println(c_date)
+	//* fmt.Println(time.Now())
+	utils.CheckIfError(err)
+	//* fmt.Println(resp.TotalTime())
+	date_str, ok := resp.Header["Date"]
+	if !ok {
+		return -1, ErrGetTimeDiffFailed
+	}
+	s_date, err := time.Parse(time.RFC1123, date_str[0])
+	utils.CheckIfError(err)
+	s_date = s_date.Local()
+	//* utils.Info("Client Time:%s\nServer Time:%s", c_date, s_date)
+	//* 按照之前抢课的经验服务器时间会更快
+	return c_date.Sub(s_date), nil
 }
